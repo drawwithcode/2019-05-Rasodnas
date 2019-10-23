@@ -47,6 +47,7 @@ function setup() {
 
   // speech recognition
   rec = new p5.SpeechRec();
+  rec.continuous = true;
   rec.start();
   rec.onResult = colorCheck; // if a word is recognized then call recResult function
 
@@ -92,15 +93,15 @@ function draw() {
 
     var tmpCol = colorCheck();
 
-    if (tmpCol === 'Red' || tmpCol === 'rosso') {
+    if (tmpCol === 'Red' || tmpCol === 'rosso' && !flagColor) {
       bgColor = color(255, 0, 0);
       flagColor = true;
     }
-    else if (tmpCol === 'Blue' || tmpCol === 'blu') {
+    else if (tmpCol === 'Blue' || tmpCol === 'blu' && !flagColor) {
       bgColor = color(0, 0, 255);
       flagColor = true;
     }
-    else if (tmpCol === 'Yellow' || tmpCol === 'giallo') {
+    else if (tmpCol === 'Yellow' || tmpCol === 'giallo' && !flagColor) {
       bgColor = color(255, 255, 0);
       flagColor = true;
     }
