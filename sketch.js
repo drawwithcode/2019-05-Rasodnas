@@ -36,7 +36,10 @@ var bgColor;
 var mouseCounter = 0;
 var finalInc = 0;
 
-var treb = 1;
+
+
+
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -50,36 +53,14 @@ function setup() {
   rec.continuous = true;
   rec.start();
   rec.onResult = colorCheck; // if a word is recognized then call recResult function
-
 }
+
+
 
 function draw() {
   background('black');
 
-
-  /*ellipseArea = PI * Math.pow(inc / 2, 2);
-    windowArea = width * height
-
-    console.log(ellipseArea);
-    console.log(windowArea);*/
-
-  //      1) CLICK TO CHANGE BACKGROUND COLOR
-  //      2) OK, CHOOSE A COLOR FIRST (pink, green, white)
-  //      3) YEAH, NOW INFLATE IT
-  //      4) KEEP GOING UNTIL YOU'VE FILLED ALL THE SPACE
-  //      5) AND STOP IT AT THE RIGHT TIME
-  //      E) YOUR COLOR ISN'T BIG ENOUGH!
-  //      S) ALLRIGHT, THERE YOU GO. BACKGROUND SUCCESFULLY CHANGED.
-
-
-  // COLOR SPELL
-  // INSERT HERE BG COMPLETE CONTROL
-
-
-
-
-
-  // TXT 1 - CLICK TO CHANGE BACKGROUND
+// STEP 1 -  Click to change background
   if (flagClick) {
     push();
     textSize(16);
@@ -89,8 +70,10 @@ function draw() {
     pop();
   }
 
+// STEP 2 -  Choose the color
   else {
 
+    // get color choice from voice recognition
     var tmpCol = colorCheck();
 
     if (tmpCol === 'Red' || tmpCol === 'rosso' && !flagColor) {
@@ -106,8 +89,8 @@ function draw() {
       flagColor = true;
     }
 
-
-    if (!flagColor) {
+    // spawn the 3 coloured ellipses
+    if (!flagColor) {                           // multitude of flags to manage text order of spawning
 
       push();
       fill('red')
@@ -139,17 +122,19 @@ function draw() {
         text('Are you doing it right?', mouseX, mouseY - 45);
         pop();
       }
-
     }
+
+// STEP 3 - Inflate
     else {
 
+      // if stop button is pressed and width of ellipse is big enough then flagStop = YES
       if (lockInflate && inc > width - 500) {
         flagStop = true;
       }
 
-      console.log(lockInflate);
-
+      // if flagStop = NO! then get volume from mic and inflate the ellipse
       if (!flagStop) {
+
         // get volume from mic
         var vol = mic.getLevel();
         var volMap = map(vol, 0, 1, 1, 100); // volume gets 50 max, anyway
@@ -172,18 +157,12 @@ function draw() {
         }
 
         // shape inflates
-        if (inc > 600) {
-          treb = 1;
-        }
-        else {
-          treb = 0;
-        }
-
         push();
         fill(bgColor);
         ellipse(width / 2, height / 2, inc);
         pop();
 
+        // if it isnt expanding then invite the user to do it
         if (!flagInflate) {
           push();
           textSize(16);
@@ -192,6 +171,7 @@ function draw() {
           text(txt3, mouseX, mouseY - 40);
           pop();
         }
+        // if it just deflated then show a message of encouragement
         else if (flagReinflate && !lockInflate) {
           push();
           textSize(16);
@@ -200,8 +180,11 @@ function draw() {
           text(txtReinflate[rndInflate], mouseX, mouseY - 40);
           pop();
         }
+
+        // if it's expanding good then tell the user what to do next
         else if (inc > windowWidth / 3) {
 
+          // tell the user to press the Stop button after the threshold area
           if (!lockInflate) {
           push();
           textSize(10+inc/90);
@@ -211,6 +194,7 @@ function draw() {
           pop();
           }
 
+          // show the threshold area
           push();
           noFill();
           stroke(bgColor, inc);
@@ -219,6 +203,7 @@ function draw() {
           pop();
         }
 
+        // if the user presses the Stop button before the threshold area then show an error message
         if (lockInflate && inc > width / 3) {
           push();
           textSize(10+inc/90);
@@ -227,17 +212,19 @@ function draw() {
           text(txtErr, width / 2, height / 2);
           pop();
         }
-
       }
 
+// STEP 4 - Background changed
     else {
       finalInc += 25;
 
+      // if ellipse is bigger than the threshold area and button Stop is pressed then give the ellipse a final acceleration
       push();
       fill(bgColor);
       ellipse(width / 2, height / 2, inc + finalInc);
       pop();
 
+      // show success message
       push();
       textSize(18);
       textAlign(CENTER);
@@ -245,29 +232,24 @@ function draw() {
       text(txtSuc, width / 2, height / 2);
       pop();
     }
-
-    }
-
+  }
   }
 
 }
 
-
-function recResult() {
-  var result = rec.resultString;
-  return result;
-}
-
+// check mouse click
 function mouseClicked() {
   flagClick = false;
   mouseCounter += 1;
 }
 
+// check speech recogniton string
 function colorCheck(){
   var result = rec.resultString;
   return result;
 }
 
+// key control for the Stop button
 function keyPressed(){
   if (key == 's' || key == 'S') {
     lockInflate = true;
